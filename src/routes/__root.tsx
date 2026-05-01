@@ -12,14 +12,18 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Kaashvi Beauty Studio — Best Bridal & HD Makeup Artist in Odisha" },
+      { title: "Suryansi Makeover — Best Bridal & HD Makeup Artist in Odisha" },
       { name: "description", content: "Award-winning bridal & HD makeup artist in Bhubaneswar, Odisha. Heirloom artistry for brides, parties, fashion shoots. Book your consultation today." },
       { name: "author", content: "Kaashvi Beauty Studio" },
       { name: "keywords", content: "best makeup artist in Odisha, bridal makeup near me, HD makeup artist Bhubaneswar, airbrush makeup, party makeup Odisha" },
-      { property: "og:title", content: "Kaashvi Beauty Studio — Heirloom Bridal Artistry" },
-      { property: "og:description", content: "Luxury bridal & HD makeup in Odisha. Bookings open." },
+      { property: "og:title", content: "Suryansi Makeover — Best Bridal & HD Makeup Artist in Odisha" },
+      { property: "og:description", content: "Award-winning bridal & HD makeup artist in Bhubaneswar, Odisha. Heirloom artistry for brides, parties, fashion shoots. Book your consultation today." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "Suryansi Makeover — Best Bridal & HD Makeup Artist in Odisha" },
+      { name: "twitter:description", content: "Award-winning bridal & HD makeup artist in Bhubaneswar, Odisha. Heirloom artistry for brides, parties, fashion shoots. Book your consultation today." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/ec91972f-24f5-4dfe-bb96-2c721c14a2e4/id-preview-2b0e1626--1ecd7bba-fbd7-4f10-a02a-6be9a6d05637.lovable.app-1777551462911.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/ec91972f-24f5-4dfe-bb96-2c721c14a2e4/id-preview-2b0e1626--1ecd7bba-fbd7-4f10-a02a-6be9a6d05637.lovable.app-1777551462911.png" },
     ],
     links: [
       {
