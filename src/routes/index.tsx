@@ -80,7 +80,7 @@ function HomePage() {
       {/* HERO — Full-screen with parallax */}
       <section className="relative min-h-screen w-full overflow-hidden flex items-center">
         <div
-          className="absolute inset-0 -z-10"
+          className="absolute inset-0 z-0"
           style={{ transform: `translateY(${scrollY * 0.3}px) scale(1.1)` }}
         >
           <video
