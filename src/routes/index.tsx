@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import heroImg from "@/assets/hero-suryanshi.jpg";
+import heroVideoAsset from "@/assets/hero-video.mp4.asset.json";
 import g1 from "@/assets/gallery-1.jpg";
 import g2 from "@/assets/gallery-2.jpg";
 import g3 from "@/assets/gallery-3.jpg";
@@ -13,7 +14,7 @@ import hd from "@/assets/service-hd.jpg";
 import airbrush from "@/assets/service-prewed.jpg";
 import hair from "@/assets/service-hair.jpg";
 import { BRAND, whatsappLink } from "@/lib/brand";
-import { Sparkles, Award, ShieldCheck, Clock, ArrowRight, Star, Instagram, MapPin, Phone, MessageCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { Sparkles, Award, ShieldCheck, Clock, ArrowRight, Star, Instagram, MapPin, Phone, MessageCircle, ChevronLeft, ChevronRight, Volume2, VolumeX } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
@@ -54,11 +55,25 @@ const WHY = [
 
 function HomePage() {
   const [scrollY, setScrollY] = useState(0);
+  const [muted, setMuted] = useState(true);
+  const audioRef = useRef<HTMLAudioElement>(null);
   useEffect(() => {
     const onScroll = () => setScrollY(window.scrollY);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const toggleSound = async () => {
+    const a = audioRef.current;
+    if (!a) return;
+    if (muted) {
+      a.volume = 0.35;
+      try { await a.play(); setMuted(false); } catch {}
+    } else {
+      a.pause();
+      setMuted(true);
+    }
+  };
 
   return (
     <>
@@ -68,16 +83,29 @@ function HomePage() {
           className="absolute inset-0 -z-10"
           style={{ transform: `translateY(${scrollY * 0.3}px) scale(1.1)` }}
         >
-          <img
-            src={heroImg}
-            alt="Bridal makeup by Suryanshi Makeover"
+          <video
+            src={heroVideoAsset.url}
+            poster={heroImg}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
             className="w-full h-full object-cover"
-            width={1536}
-            height={1920}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-ink/80 via-ink/40 to-ink/30" />
           <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent" />
         </div>
+
+        <audio ref={audioRef} src="/audio/hero-ambient.mp3" loop preload="none" />
+
+        <button
+          onClick={toggleSound}
+          aria-label={muted ? "Unmute" : "Mute"}
+          className="absolute top-24 right-5 lg:right-12 z-20 w-11 h-11 rounded-full bg-surface/15 backdrop-blur-md border border-surface/30 text-surface flex items-center justify-center hover:bg-gold hover:text-ink hover:border-gold transition-all"
+        >
+          {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+        </button>
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 py-32 w-full">
           <div className="max-w-2xl animate-fade-up">
