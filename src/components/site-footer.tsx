@@ -43,7 +43,10 @@ export function SiteFooter() {
       <div className="border-t border-surface/10">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 py-5 flex flex-col md:flex-row justify-between items-center gap-2 text-xs text-surface/50 font-sans-ui tracking-wider uppercase">
           <span>© {new Date().getFullYear()} {BRAND.name}</span>
-          <span>Crafted with love · Odisha</span>
+          <span className="flex gap-4 items-center">
+            Crafted with love · Odisha
+            <Link to="/admin" className="opacity-40 hover:opacity-100 hover:text-gold normal-case tracking-normal">Admin</Link>
+          </span>
         </div>
       </div>
     </footer>
