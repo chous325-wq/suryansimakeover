@@ -7,7 +7,7 @@ import g3 from "@/assets/gallery-5.jpg";
 export const Route = createFileRoute("/blog")({
   head: () => ({
     meta: [
-      { title: "Beauty Journal — Kaashvi Beauty Studio" },
+      { title: "Beauty Journal — Suryanshi Makeover" },
       { name: "description", content: "Bridal beauty tips, skincare routines and behind-the-scenes from Odisha's premium makeup studio." },
     ],
   }),

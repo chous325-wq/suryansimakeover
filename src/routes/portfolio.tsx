@@ -7,7 +7,7 @@ import { X } from "lucide-react";
 export const Route = createFileRoute("/portfolio")({
   head: () => ({
     meta: [
-      { title: "Portfolio — Kaashvi Beauty Studio" },
+      { title: "Portfolio — Suryanshi Makeover" },
       { name: "description", content: "Explore our gallery of bridal, party and fashion makeup work across Odisha." },
     ],
   }),

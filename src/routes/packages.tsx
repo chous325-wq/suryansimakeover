@@ -6,7 +6,7 @@ import { Check } from "lucide-react";
 export const Route = createFileRoute("/packages")({
   head: () => ({
     meta: [
-      { title: "Bridal Packages — Kaashvi Beauty Studio" },
+      { title: "Bridal Packages — Suryanshi Makeover" },
       { name: "description", content: "Curated bridal packages for engagement, wedding day and full trousseau coverage." },
     ],
   }),
