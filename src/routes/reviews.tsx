@@ -6,18 +6,18 @@ import { Star } from "lucide-react";
 export const Route = createFileRoute("/reviews")({
   head: () => ({
     meta: [
-      { title: "Reviews — Kaashvi Beauty Studio" },
-      { name: "description", content: "Read what brides across Odisha say about their experience with Kaashvi Beauty Studio." },
+      { title: "Reviews — Suryanshi Makeover" },
+      { name: "description", content: "Read what brides across Odisha say about their experience with Suryanshi Makeover." },
     ],
   }),
   component: ReviewsPage,
 });
 
 const EXTRA = [
-  { name: "Sneha M.", role: "Bride, Bhubaneswar", text: "I had three trials with other artists before finding Kaashvi. The difference was night and day — she actually listened to what I wanted." },
+  { name: "Sneha M.", role: "Bride, Bhubaneswar", text: "I had three trials with other artists before finding Suryanshi. The difference was night and day — she actually listened to what I wanted." },
   { name: "Priya T.", role: "Reception Bride", text: "My HD makeup looked stunning in every photograph. Even in 4K video, the skin looked flawless and natural." },
   { name: "Anjali D.", role: "Bride, Cuttack", text: "From the trial to the wedding day, everything was seamless. The team is professional, talented, and so warm." },
-  { name: "Smruti R.", role: "Mother of the Bride", text: "Kaashvi made me feel beautiful at 52. Subtle, elegant, and absolutely my style. Thank you." },
+  { name: "Smruti R.", role: "Mother of the Bride", text: "Suryanshi made me feel beautiful at 52. Subtle, elegant, and absolutely my style. Thank you." },
   { name: "Lipika P.", role: "Pre-wedding Shoot", text: "Two locations, three outfit changes — never broke a sweat. The makeup held up perfectly." },
 ];
 

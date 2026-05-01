@@ -5,7 +5,7 @@ import { SERVICES } from "@/data/site-data";
 export const Route = createFileRoute("/services")({
   head: () => ({
     meta: [
-      { title: "Services — Bridal, HD & Airbrush Makeup | Kaashvi Beauty" },
+      { title: "Services — Bridal, HD & Airbrush Makeup | Suryanshi Beauty" },
       { name: "description", content: "Bridal, party, HD, airbrush makeup, hairstyling, pre-wedding shoots and saree draping by Odisha's most trusted makeup artist." },
     ],
   }),

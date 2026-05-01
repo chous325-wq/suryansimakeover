@@ -6,8 +6,8 @@ import { Award, Heart, Sparkles } from "lucide-react";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About the Artist — Kaashvi Beauty Studio" },
-      { name: "description", content: "Meet Kaashvi — celebrated bridal makeup artist in Odisha with over 12 years of artistry experience." },
+      { title: "About the Artist — Suryanshi Makeover" },
+      { name: "description", content: "Meet Suryanshi — celebrated bridal makeup artist in Odisha with over 12 years of artistry experience." },
     ],
   }),
   component: AboutPage,
@@ -20,13 +20,13 @@ function AboutPage() {
       <section className="py-24 px-6 lg:px-12">
         <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
           <div className="relative w-full max-w-md mx-auto aspect-[3/4] bg-blush p-3">
-            <img src={about} alt="Makeup artist Kaashvi at work" loading="lazy" width={900} height={1200} className="w-full h-full object-cover" />
+            <img src={about} alt="Makeup artist Suryanshi at work" loading="lazy" width={900} height={1200} className="w-full h-full object-cover" />
           </div>
           <div>
             <span className="ornament mb-6">Founder · Lead Artist</span>
-            <h2 className="font-display text-4xl md:text-5xl mb-6">Kaashvi Patnaik</h2>
+            <h2 className="font-display text-4xl md:text-5xl mb-6">Suryanshi Patnaik</h2>
             <div className="space-y-5 text-ink/80 leading-relaxed">
-              <p>Born in Bhubaneswar and trained in Mumbai under some of India's most respected celebrity artists, Kaashvi blends classical Odia bridal aesthetics with international techniques.</p>
+              <p>Born in Bhubaneswar and trained in Mumbai under some of India's most respected celebrity artists, Suryanshi blends classical Odia bridal aesthetics with international techniques.</p>
               <p>Her studio has had the privilege of styling over 500 brides, fashion editorials, and pre-wedding campaigns across Odisha. Each look is approached as a personal heirloom — never repeated, always remembered.</p>
               <p>"Beauty is not transformation. It's translation — of who you are, on the most important day of your life."</p>
             </div>

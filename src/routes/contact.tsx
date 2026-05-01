@@ -3,12 +3,13 @@ import { useState } from "react";
 import { PageHero } from "@/components/page-hero";
 import { toast } from "sonner";
 import { Phone, Mail, MapPin, Instagram } from "lucide-react";
+import { BRAND } from "@/lib/brand";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — Kaashvi Beauty Studio | Bhubaneswar, Odisha" },
-      { name: "description", content: "Reach out to Kaashvi Beauty Studio in Bhubaneswar, Odisha. Quick replies via WhatsApp." },
+      { title: "Contact — Suryanshi Makeover | Bhubaneswar, Odisha" },
+      { name: "description", content: "Reach Suryanshi Makeover in Bhubaneswar, Odisha. Quick replies on WhatsApp." },
     ],
   }),
   component: ContactPage,
@@ -30,15 +31,15 @@ function ContactPage() {
           <div>
             <h2 className="font-display text-3xl mb-8">Studio Details</h2>
             <ul className="space-y-6">
-              <ContactRow Icon={MapPin} label="Visit the Studio" value="Plot 234, Patia, Bhubaneswar, Odisha 751024" />
-              <ContactRow Icon={Phone} label="Call us" value="+91 99999 99999" href="tel:+919999999999" />
-              <ContactRow Icon={Mail} label="Email" value="hello@kaashvibeauty.com" href="mailto:hello@kaashvibeauty.com" />
-              <ContactRow Icon={Instagram} label="Instagram" value="@kaashvibeauty" href="https://instagram.com" />
+              <ContactRow Icon={MapPin} label="Visit the Studio" value={BRAND.address} href={BRAND.mapUrl} />
+              <ContactRow Icon={Phone} label="Call us" value={BRAND.phoneDisplay} href={`tel:${BRAND.phoneTel}`} />
+              <ContactRow Icon={Mail} label="Email" value={BRAND.email} href={`mailto:${BRAND.email}`} />
+              <ContactRow Icon={Instagram} label="Instagram" value={BRAND.instagramHandle} href={BRAND.instagramUrl} />
             </ul>
             <div className="mt-10 aspect-video bg-blush overflow-hidden">
               <iframe
                 title="Studio location"
-                src="https://www.google.com/maps?q=Bhubaneswar,Odisha&output=embed"
+                src={BRAND.mapEmbed}
                 className="w-full h-full border-0"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
