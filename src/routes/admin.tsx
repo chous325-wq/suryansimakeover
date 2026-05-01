@@ -209,8 +209,11 @@ function BookingsAdmin() {
 function ServicesAdmin() {
   type Service = Tables<"services">;
   const empty = {
-    name: "", slug: "", tagline: "", description: "",
-    image_url: "", price_from: null as number | null, price_to: null as number | null,
+    name: "", slug: "",
+    tagline: "" as string | null,
+    description: "" as string | null,
+    image_url: "" as string | null,
+    price_from: null as number | null, price_to: null as number | null,
     sort_order: 0, is_active: true,
   };
   const [items, setItems] = useState<Service[]>([]);
@@ -449,8 +452,12 @@ function PackagesAdmin() {
 function PortfolioAdmin() {
   type Item = Tables<"portfolio_items">;
   const empty = {
-    title: "", category: "bridal", image_url: "",
-    before_url: "", after_url: "", sort_order: 0, is_published: true,
+    title: "" as string | null,
+    category: "bridal",
+    image_url: "",
+    before_url: "" as string | null,
+    after_url: "" as string | null,
+    sort_order: 0, is_published: true,
   };
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
@@ -574,7 +581,9 @@ function PortfolioAdmin() {
 function TestimonialsAdmin() {
   type T = Tables<"testimonials">;
   const empty = {
-    author_name: "", author_role: "", quote: "", rating: 5,
+    author_name: "",
+    author_role: "" as string | null,
+    quote: "", rating: 5,
     sort_order: 0, is_published: true,
   };
   const [items, setItems] = useState<T[]>([]);
@@ -672,8 +681,13 @@ function TestimonialsAdmin() {
 function OffersAdmin() {
   type O = Tables<"offers">;
   const empty = {
-    title: "", description: "", badge: "", image_url: "",
-    link_url: "", expires_at: "" as string | null, is_active: true,
+    title: "",
+    description: "" as string | null,
+    badge: "" as string | null,
+    image_url: "" as string | null,
+    link_url: "" as string | null,
+    expires_at: "" as string | null,
+    is_active: true,
   };
   const [items, setItems] = useState<O[]>([]);
   const [loading, setLoading] = useState(true);
