@@ -121,6 +121,16 @@ function BookingsAdmin() {
   type Booking = Tables<"bookings">;
   const [items, setItems] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [serviceMap, setServiceMap] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    supabase.from("services").select("slug, name").then(({ data }) => {
+      if (!data) return;
+      const m: Record<string, string> = {};
+      data.forEach((s) => { m[s.slug] = s.name; });
+      setServiceMap(m);
+    });
+  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -159,7 +169,7 @@ function BookingsAdmin() {
             <TableHead>Date</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Phone</TableHead>
-            <TableHead>Event</TableHead>
+            <TableHead>Service</TableHead>
             <TableHead>Status</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
@@ -175,8 +185,9 @@ function BookingsAdmin() {
                 </a>
               </TableCell>
               <TableCell className="text-sm">
-                {b.event_type ?? "—"}
+                {b.service_slug ? (serviceMap[b.service_slug] ?? b.service_slug) : (b.event_type ?? "—")}
                 {b.event_date && <div className="text-xs text-muted-foreground">{b.event_date}</div>}
+                {b.location && <div className="text-xs text-muted-foreground">📍 {b.location}</div>}
               </TableCell>
               <TableCell>
                 <Select value={b.status} onValueChange={(v) => updateStatus(b.id, v as Booking["status"])}>
@@ -488,6 +499,7 @@ function PortfolioAdmin() {
   const save = async () => {
     if (!editing) return;
     if (!editing.image_url) { toast.error("Image required"); return; }
+    if (uploading) { toast.error("Please wait for upload to finish"); return; }
     const payload = { ...editing };
     delete (payload as { id?: string }).id;
     const { error } = editing.id

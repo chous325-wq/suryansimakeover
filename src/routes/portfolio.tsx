@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PageHero } from "@/components/page-hero";
 import { GALLERY } from "@/data/site-data";
 import { X } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/portfolio")({
   head: () => ({
@@ -14,14 +15,34 @@ export const Route = createFileRoute("/portfolio")({
   component: PortfolioPage,
 });
 
-const CATEGORIES = ["All", "Bridal", "Party", "Fashion"] as const;
+type Item = { src: string; category: string; alt: string };
 
 function PortfolioPage() {
-  const [filter, setFilter] = useState<typeof CATEGORIES[number]>("All");
+  const [filter, setFilter] = useState<string>("All");
   const [lightbox, setLightbox] = useState<string | null>(null);
-  const items = GALLERY.filter(g => filter === "All" || g.category === filter);
-  // Duplicate gallery to make it richer
-  const display = [...items, ...items];
+  const [data, setData] = useState<Item[]>(GALLERY);
+
+  useEffect(() => {
+    supabase
+      .from("portfolio_items")
+      .select("title, category, image_url")
+      .eq("is_published", true)
+      .order("sort_order")
+      .then(({ data: rows }) => {
+        if (!rows || !rows.length) return;
+        setData(
+          rows.map((r) => ({
+            src: r.image_url,
+            category: r.category ? r.category.charAt(0).toUpperCase() + r.category.slice(1) : "Other",
+            alt: r.title || "Portfolio image",
+          }))
+        );
+      });
+  }, []);
+
+  const categories = ["All", ...Array.from(new Set(data.map((d) => d.category)))];
+  const items = data.filter((g) => filter === "All" || g.category === filter);
+  const display = items.length < 6 ? [...items, ...items] : items;
 
   return (
     <>
@@ -29,7 +50,7 @@ function PortfolioPage() {
       <section className="px-6 lg:px-12 pb-24">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-center gap-2 md:gap-6 mb-12 flex-wrap">
-            {CATEGORIES.map(c => (
+            {categories.map(c => (
               <button
                 key={c}
                 onClick={() => setFilter(c)}
