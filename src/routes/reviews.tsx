@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { PageHero } from "@/components/page-hero";
 import { TESTIMONIALS } from "@/data/site-data";
 import { Star } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/reviews")({
   head: () => ({
@@ -22,7 +24,19 @@ const EXTRA = [
 ];
 
 function ReviewsPage() {
-  const all = [...TESTIMONIALS, ...EXTRA];
+  const fallback = [...TESTIMONIALS, ...EXTRA].map((t) => ({ name: t.name, role: t.role, text: t.text }));
+  const [all, setAll] = useState(fallback);
+  useEffect(() => {
+    supabase
+      .from("testimonials")
+      .select("author_name, author_role, quote")
+      .eq("is_published", true)
+      .order("sort_order")
+      .then(({ data }) => {
+        if (!data || !data.length) return;
+        setAll(data.map((d) => ({ name: d.author_name, role: d.author_role ?? "", text: d.quote })));
+      });
+  }, []);
   return (
     <>
       <PageHero eyebrow="Cherished Words" title={<>Stories from <span className="italic">our brides</span></>} subtitle="Each review is a moment we treasure — thank you for letting us be part of your story." />
