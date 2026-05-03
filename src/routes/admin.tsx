@@ -169,6 +169,7 @@ function BookingsAdmin() {
             <TableHead>Date</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Phone</TableHead>
+            <TableHead>Email</TableHead>
             <TableHead>Service</TableHead>
             <TableHead>Status</TableHead>
             <TableHead className="text-right">Actions</TableHead>
@@ -183,6 +184,11 @@ function BookingsAdmin() {
                 <a href={`https://wa.me/${b.phone.replace(/\D/g, "")}`} target="_blank" rel="noreferrer" className="text-gold-dark hover:underline">
                   {b.phone}
                 </a>
+              </TableCell>
+              <TableCell className="text-xs">
+                {b.email ? (
+                  <a href={`mailto:${b.email}`} className="text-gold-dark hover:underline">{b.email}</a>
+                ) : "—"}
               </TableCell>
               <TableCell className="text-sm">
                 {b.service_slug ? (serviceMap[b.service_slug] ?? b.service_slug) : (b.event_type ?? "—")}

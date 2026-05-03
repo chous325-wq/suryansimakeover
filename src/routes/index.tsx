@@ -430,31 +430,40 @@ function TestimonialsSlider() {
 }
 
 function OfferBanner() {
-  const [offer, setOffer] = useState<{ title: string; description: string | null; badge: string | null } | null>({
-    title: "Limited Time Bridal Offer",
-    description: "Book your bridal package this season and receive a complimentary pre-bridal trial.",
-    badge: "Limited Time",
-  });
+  const [offer, setOffer] = useState<{ title: string; image_url: string | null; expires_at: string | null } | null>(null);
 
   useEffect(() => {
     supabase
       .from("offers")
-      .select("title, description, badge")
+      .select("title, image_url, expires_at")
       .eq("is_active", true)
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle()
-      .then(({ data }) => { if (data) setOffer(data); });
+      .then(({ data }) => {
+        if (!data) return;
+        if (data.expires_at && new Date(data.expires_at).getTime() < Date.now()) return;
+        setOffer(data);
+      });
   }, []);
 
   if (!offer) return null;
   return (
-    <section className="bg-gradient-to-r from-ink via-gold-dark to-ink text-surface py-5 px-6 overflow-hidden">
-      <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-3 md:gap-6 text-center">
-        {offer.badge && <span className="bg-gold text-ink text-[9px] font-sans-ui uppercase tracking-[0.25em] px-3 py-1">{offer.badge}</span>}
-        <span className="font-display text-lg md:text-xl">{offer.title}</span>
-        {offer.description && <span className="hidden md:inline text-sm text-surface/80">— {offer.description}</span>}
-        <Link to="/booking" className="text-[10px] font-sans-ui uppercase tracking-[0.25em] text-gold border-b border-gold/60 pb-0.5 hover:text-surface">Book Now →</Link>
+    <section className="py-20 md:py-28 px-6 lg:px-12 bg-gradient-to-b from-blush/30 to-surface overflow-hidden">
+      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 md:gap-16 items-center">
+        <div className="animate-fade-up">
+          <span className="ornament mb-5">Special Offer</span>
+          <h2 className="font-display text-4xl md:text-6xl text-ink leading-[1.05] tracking-tight text-balance">
+            <span className="inline-block animate-fade-in italic text-gold">{offer.title}</span>
+          </h2>
+          <div className="h-px w-16 bg-gold/40 mt-7" />
+          <Link to="/booking" className="btn-gold mt-8 inline-flex">Book Now</Link>
+        </div>
+        {offer.image_url && (
+          <div className="aspect-[4/5] overflow-hidden shadow-elegant animate-fade-in">
+            <img src={offer.image_url} alt={offer.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-1000" />
+          </div>
+        )}
       </div>
     </section>
   );
