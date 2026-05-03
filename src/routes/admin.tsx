@@ -499,6 +499,7 @@ function PortfolioAdmin() {
   const save = async () => {
     if (!editing) return;
     if (!editing.image_url) { toast.error("Image required"); return; }
+    if (uploading) { toast.error("Please wait for upload to finish"); return; }
     const payload = { ...editing };
     delete (payload as { id?: string }).id;
     const { error } = editing.id
