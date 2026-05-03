@@ -19,7 +19,12 @@ export const Route = createFileRoute("/booking")({
 
 const bookingSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(100),
-  phone: z.string().trim().min(7, "Valid phone required").max(20),
+  phone: z
+    .string()
+    .trim()
+    .refine((v) => v.replace(/\D/g, "").length === 10, {
+      message: "Phone must be exactly 10 digits",
+    }),
   email: z.string().trim().email().max(255).optional().or(z.literal("")),
   event_date: z.string().min(1, "Date required"),
   service_slug: z.string().min(1),
@@ -118,7 +123,19 @@ function BookingPage() {
         <form onSubmit={handle} className="max-w-3xl mx-auto bg-surface border-2 border-gold/30 p-8 md:p-12 space-y-6 shadow-elegant">
           <div className="grid md:grid-cols-2 gap-6">
             <Field label="Full Name *"><input required value={form.name} onChange={e => setForm({...form, name: e.target.value})} className="input" /></Field>
-            <Field label="Phone (WhatsApp) *"><input required type="tel" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} className="input" placeholder="+91 ..." /></Field>
+            <Field label="Phone (10 digits) *">
+              <input
+                required
+                type="tel"
+                inputMode="numeric"
+                pattern="[0-9]{10}"
+                maxLength={10}
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value.replace(/\D/g, "").slice(0, 10) })}
+                className="input"
+                placeholder="10-digit mobile number"
+              />
+            </Field>
           </div>
           <Field label="Email (optional)"><input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} className="input" /></Field>
           <div className="grid md:grid-cols-2 gap-6">
