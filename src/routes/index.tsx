@@ -38,7 +38,7 @@ const PORTFOLIO: Tile[] = [
   { src: g6, cat: "Party", alt: "Reception look" },
 ];
 
-const SERVICES_PREVIEW = [
+const SERVICES_PREVIEW_DEFAULT = [
   { name: "Bridal Makeup", price: "From ₹25,000", img: bridal, slug: "bridal" },
   { name: "Party Makeup", price: "From ₹5,500", img: party, slug: "party" },
   { name: "HD Makeup", price: "From ₹7,500", img: hd, slug: "hd" },
@@ -57,6 +57,27 @@ function HomePage() {
   const [scrollY, setScrollY] = useState(0);
   const [muted, setMuted] = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const [servicesPreview, setServicesPreview] = useState(SERVICES_PREVIEW_DEFAULT);
+  useEffect(() => {
+    supabase
+      .from("services")
+      .select("slug, name, price_from, image_url")
+      .eq("is_active", true)
+      .order("sort_order")
+      .limit(6)
+      .then(({ data }) => {
+        if (!data || !data.length) return;
+        const fallback = Object.fromEntries(SERVICES_PREVIEW_DEFAULT.map((s) => [s.slug, s.img]));
+        setServicesPreview(
+          data.map((d) => ({
+            name: d.name,
+            price: d.price_from ? `From ₹${d.price_from.toLocaleString("en-IN")}` : "",
+            img: d.image_url || fallback[d.slug] || bridal,
+            slug: d.slug,
+          }))
+        );
+      });
+  }, []);
   useEffect(() => {
     const onScroll = () => setScrollY(window.scrollY);
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -169,7 +190,7 @@ function HomePage() {
         <div className="max-w-7xl mx-auto">
           <SectionHead eyebrow="Signature Services" title={<>Crafted <span className="italic">looks</span></>} />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {SERVICES_PREVIEW.map((s, i) => (
+            {servicesPreview.map((s, i) => (
               <div
                 key={s.slug}
                 className="group relative bg-surface overflow-hidden shadow-soft hover:shadow-elegant transition-all duration-700 hover:-translate-y-2"
