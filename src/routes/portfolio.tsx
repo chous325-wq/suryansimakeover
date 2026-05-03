@@ -27,7 +27,7 @@ function PortfolioPage() {
       .from("portfolio_items")
       .select("title, category, image_url")
       .eq("is_published", true)
-      .order("sort_order")
+      .order("created_at", { ascending: false })
       .then(({ data: rows }) => {
         if (!rows || !rows.length) return;
         setData(
