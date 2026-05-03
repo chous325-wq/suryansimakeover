@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { PageHero } from "@/components/page-hero";
 import { PACKAGES } from "@/data/site-data";
 import { Check } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/packages")({
   head: () => ({
@@ -14,12 +16,31 @@ export const Route = createFileRoute("/packages")({
 });
 
 function PackagesPage() {
+  const [items, setItems] = useState(PACKAGES);
+  useEffect(() => {
+    supabase
+      .from("packages")
+      .select("name, price, features, is_popular")
+      .eq("is_active", true)
+      .order("sort_order")
+      .then(({ data }) => {
+        if (!data || !data.length) return;
+        setItems(
+          data.map((d) => ({
+            name: d.name,
+            price: d.price,
+            features: d.features ?? [],
+            popular: d.is_popular,
+          }))
+        );
+      });
+  }, []);
   return (
     <>
       <PageHero eyebrow="Bridal Packages" title={<>Curated <span className="italic">collections</span></>} subtitle="Three signature packages, designed around the rhythm of Indian weddings. Custom plans available on request." />
       <section className="px-6 lg:px-12 pb-32">
         <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
-          {PACKAGES.map(p => (
+          {items.map(p => (
             <div key={p.name} className={`relative bg-surface border-2 p-10 flex flex-col ${p.popular ? "border-gold shadow-elegant md:scale-[1.03]" : "border-border"}`}>
               {p.popular && (
                 <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gold text-surface text-[10px] tracking-widest font-sans-ui uppercase px-4 py-1">Most Loved</span>
