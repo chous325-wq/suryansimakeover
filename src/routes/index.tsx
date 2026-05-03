@@ -334,7 +334,33 @@ function SectionHead({ eyebrow, title, subtitle, align = "center" }: { eyebrow: 
 
 function PortfolioGrid() {
   const [filter, setFilter] = useState<"All" | "Bridal" | "Party" | "Natural">("All");
-  const items = filter === "All" ? PORTFOLIO : PORTFOLIO.filter((p) => p.cat === filter);
+  const [tiles, setTiles] = useState<Tile[]>(PORTFOLIO);
+
+  useEffect(() => {
+    supabase
+      .from("portfolio_items")
+      .select("title, category, image_url")
+      .eq("is_published", true)
+      .order("created_at", { ascending: false })
+      .then(({ data }) => {
+        if (!data || !data.length) return;
+        const norm = (c: string | null): Tile["cat"] => {
+          const v = (c || "").toLowerCase();
+          if (v.startsWith("part")) return "Party";
+          if (v.startsWith("nat")) return "Natural";
+          return "Bridal";
+        };
+        setTiles(
+          data.map((d) => ({
+            src: d.image_url,
+            cat: norm(d.category),
+            alt: d.title || "Portfolio image",
+          }))
+        );
+      });
+  }, []);
+
+  const items = filter === "All" ? tiles : tiles.filter((p) => p.cat === filter);
 
   return (
     <>
