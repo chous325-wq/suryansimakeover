@@ -103,6 +103,8 @@ function AdminPage() {
             <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
             <TabsTrigger value="testimonials">Reviews</TabsTrigger>
             <TabsTrigger value="offers">Offers</TabsTrigger>
+            <TabsTrigger value="hero">Hero Video</TabsTrigger>
+            <TabsTrigger value="reels">Reels</TabsTrigger>
           </TabsList>
           <TabsContent value="bookings"><BookingsAdmin /></TabsContent>
           <TabsContent value="services"><ServicesAdmin /></TabsContent>
@@ -110,6 +112,8 @@ function AdminPage() {
           <TabsContent value="portfolio"><PortfolioAdmin /></TabsContent>
           <TabsContent value="testimonials"><TestimonialsAdmin /></TabsContent>
           <TabsContent value="offers"><OffersAdmin /></TabsContent>
+          <TabsContent value="hero"><HeroVideoAdmin /></TabsContent>
+          <TabsContent value="reels"><ReelsAdmin /></TabsContent>
         </Tabs>
       </div>
     </section>
@@ -801,6 +805,180 @@ function OffersAdmin() {
 function LoadingBlock() {
   return <div className="flex justify-center py-12"><Loader2 className="w-6 h-6 animate-spin text-gold" /></div>;
 }
+
+/* ===================== HERO VIDEO ===================== */
+function HeroVideoAdmin() {
+  const [url, setUrl] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "hero_video_url")
+      .maybeSingle()
+      .then(({ data }) => {
+        setUrl(data?.value ?? "");
+        setLoading(false);
+      });
+  }, []);
+
+  const upload = async (file: File) => {
+    setUploading(true);
+    const ext = file.name.split(".").pop();
+    const path = `hero-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("hero-video").upload(path, file, {
+      contentType: file.type,
+      upsert: false,
+    });
+    setUploading(false);
+    if (error) { toast.error(error.message); return; }
+    const { data } = supabase.storage.from("hero-video").getPublicUrl(path);
+    setUrl(data.publicUrl);
+    toast.success("Uploaded — click Save to publish");
+  };
+
+  const save = async () => {
+    setSaving(true);
+    const { error } = await supabase
+      .from("site_settings")
+      .upsert({ key: "hero_video_url", value: url }, { onConflict: "key" });
+    setSaving(false);
+    if (error) toast.error(error.message);
+    else toast.success("Hero video saved");
+  };
+
+  if (loading) return <LoadingBlock />;
+
+  return (
+    <Card className="p-6 space-y-4 max-w-2xl">
+      <div>
+        <h3 className="font-display text-xl mb-1">Homepage Hero Video</h3>
+        <p className="text-xs text-muted-foreground">Upload an MP4 file or paste a direct video URL.</p>
+      </div>
+      <Field label="Upload video file (.mp4)">
+        <Input
+          type="file"
+          accept="video/*"
+          disabled={uploading}
+          onChange={(e) => { const f = e.target.files?.[0]; if (f) upload(f); }}
+        />
+        {uploading && <p className="text-xs text-muted-foreground mt-1">Uploading…</p>}
+      </Field>
+      <Field label="…or paste video URL">
+        <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://…/video.mp4" />
+      </Field>
+      {url && (
+        <div className="aspect-video bg-ink rounded overflow-hidden">
+          <video src={url} controls playsInline className="w-full h-full object-cover" />
+        </div>
+      )}
+      <Button onClick={save} disabled={saving || uploading} className="w-full">
+        {saving ? "Saving…" : "Save Hero Video"}
+      </Button>
+    </Card>
+  );
+}
+
+/* ===================== REELS ===================== */
+function ReelsAdmin() {
+  type Reel = Tables<"reels">;
+  const empty = { url: "", title: "" as string | null, sort_order: 0, is_active: true };
+  const [items, setItems] = useState<Reel[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState<(typeof empty & { id?: string }) | null>(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    const { data, error } = await supabase.from("reels").select("*").order("sort_order");
+    if (error) toast.error(error.message); else setItems(data ?? []);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const save = async () => {
+    if (!editing) return;
+    if (!editing.url) { toast.error("URL required"); return; }
+    const payload = { ...editing };
+    delete (payload as { id?: string }).id;
+    const { error } = editing.id
+      ? await supabase.from("reels").update(payload).eq("id", editing.id)
+      : await supabase.from("reels").insert(payload);
+    if (error) toast.error(error.message);
+    else { toast.success("Saved"); setEditing(null); load(); }
+  };
+
+  const remove = async (id: string) => {
+    if (!confirm("Delete this reel?")) return;
+    const { error } = await supabase.from("reels").delete().eq("id", id);
+    if (error) toast.error(error.message); else { toast.success("Deleted"); load(); }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <p className="text-xs text-muted-foreground">Add up to 3 active reels (Instagram reel URL or direct MP4). Shown on homepage below Instagram heading.</p>
+        <Button onClick={() => setEditing({ ...empty })} size="sm"><Plus className="w-4 h-4 mr-1" /> New Reel</Button>
+      </div>
+      {loading ? <LoadingBlock /> : !items.length ? <EmptyBlock label="No reels yet" /> : (
+        <Card className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Order</TableHead>
+                <TableHead>Title</TableHead>
+                <TableHead>URL</TableHead>
+                <TableHead>Active</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {items.map((r) => (
+                <TableRow key={r.id}>
+                  <TableCell>{r.sort_order}</TableCell>
+                  <TableCell>{r.title || "—"}</TableCell>
+                  <TableCell className="text-xs max-w-xs truncate"><a href={r.url} target="_blank" rel="noreferrer" className="text-gold-dark hover:underline">{r.url}</a></TableCell>
+                  <TableCell>{r.is_active ? <Badge>Live</Badge> : <Badge variant="secondary">Off</Badge>}</TableCell>
+                  <TableCell className="text-right">
+                    <Button variant="ghost" size="icon" onClick={() => setEditing(r)}><Pencil className="w-4 h-4" /></Button>
+                    <Button variant="ghost" size="icon" onClick={() => remove(r.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Card>
+      )}
+      {editing && (
+        <EditDrawer title={editing.id ? "Edit Reel" : "New Reel"} onClose={() => setEditing(null)} onSave={save}>
+          <Field label="Reel URL (Instagram reel link or direct .mp4)">
+            <Input value={editing.url} onChange={(e) => setEditing({ ...editing, url: e.target.value })} placeholder="https://www.instagram.com/reel/XXXX/" />
+          </Field>
+          <Field label="Title (optional)">
+            <Input value={editing.title ?? ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} />
+          </Field>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Sort Order"><Input type="number" value={editing.sort_order} onChange={(e) => setEditing({ ...editing, sort_order: Number(e.target.value) })} /></Field>
+            <Field label="Active">
+              <Select value={editing.is_active ? "true" : "false"} onValueChange={(v) => setEditing({ ...editing, is_active: v === "true" })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="true">Yes</SelectItem>
+                  <SelectItem value="false">No</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+          </div>
+        </EditDrawer>
+      )}
+    </div>
+  );
+}
+
+
 function EmptyBlock({ label }: { label: string }) {
   return <Card className="p-12 text-center text-muted-foreground">{label}</Card>;
 }
