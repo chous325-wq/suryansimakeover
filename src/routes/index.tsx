@@ -236,6 +236,60 @@ function Stat({ n, l }: { n: string; l: string }) {
   );
 }
 
+type Reel = { url: string; title: string | null };
+function ReelsRow() {
+  const [reels, setReels] = useState<Reel[]>([]);
+  useEffect(() => {
+    supabase
+      .from("reels")
+      .select("url, title")
+      .eq("is_active", true)
+      .order("sort_order")
+      .limit(3)
+      .then(({ data }) => {
+        if (data) setReels(data);
+      });
+  }, []);
+  if (!reels.length) return null;
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+      {reels.map((r, i) => (
+        <ReelCard key={i} url={r.url} title={r.title} />
+      ))}
+    </div>
+  );
+}
+
+function ReelCard({ url, title }: { url: string; title: string | null }) {
+  const isInstagram = /instagram\.com\/(reel|p|tv)\//i.test(url);
+  if (isInstagram) {
+    const clean = url.split("?")[0].replace(/\/$/, "");
+    return (
+      <div className="relative bg-blush overflow-hidden shadow-soft" style={{ aspectRatio: "9/16" }}>
+        <iframe
+          src={`${clean}/embed`}
+          title={title || "Instagram reel"}
+          loading="lazy"
+          allowTransparency
+          allow="encrypted-media"
+          className="w-full h-full border-0"
+        />
+      </div>
+    );
+  }
+  return (
+    <div className="relative bg-ink overflow-hidden shadow-soft" style={{ aspectRatio: "9/16" }}>
+      <video
+        src={url}
+        controls
+        playsInline
+        preload="metadata"
+        className="w-full h-full object-cover"
+      />
+    </div>
+  );
+}
+
 function Row({ Icon, label, value, href }: { Icon: any; label: string; value: string; href: string }) {
   return (
     <a href={href} target={href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" className="flex gap-4 items-start group">
