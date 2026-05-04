@@ -1,47 +1,39 @@
-## Issues & Fixes
+## Header Redesign — Floating Pill Style
 
-### 1. Booking phone — require exactly 10 digits
-In `src/routes/booking.tsx` update the Zod schema so `phone` must contain exactly 10 digits (after stripping non-digits). Show clear error "Phone must be 10 digits". Also add `inputMode="numeric"`, `maxLength=10`, and a digit-only filter on the input.
+Refactor `src/components/site-header.tsx` to match the reference: a floating rounded pill bar with brand on the left, centered nav links, and a prominent red "Book Now" CTA on the right. The brand name will be visually highlighted on both mobile and desktop.
 
-### 2. Booking service category not recorded in dashboard
-Today the booking form sends `service_slug`, but the admin Bookings table only displays `event_type` (which is never collected) — so the service appears empty.
+### Visual Design
 
-Fix in `src/routes/admin.tsx` → `BookingsAdmin`:
-- Add a "Service" column that reads `b.service_slug` and maps to a friendly name from a fetched services list.
-- Keep showing `event_date` below it.
+- **Container**: Floating bar centered with horizontal margin, `rounded-full`, sits 16–20px from top. Initially semi-transparent over hero with backdrop blur; on scroll switches to a solid surface variant with subtle shadow + gold border.
+- **Brand (left)**: "SURYANSHI" wordmark in display font, bold/uppercase, with a gold gradient text effect (`bg-gradient-gold` clipped to text) so it stands out on both light/dark backgrounds. Small "Makeover" eyebrow stays under it on desktop only.
+- **Nav (center, desktop)**: Work/Process style — `Home · About · Services · Portfolio · Packages · Reviews · Contact` evenly spaced; medium weight, hover → gold; active link gets a subtle gold underline pill.
+- **CTA (right)**: "Book Now" button styled as solid red/gold rounded-full pill (matching reference's red book button) with strong contrast — uses brand `--ink` background by default, switches to a vibrant red accent for emphasis as in the reference. Always visible.
+- **Mobile**: Same pill bar with brand (highlighted gold gradient), a compact "Book" red pill button, and a hamburger icon. Full-screen overlay menu retains current behavior; brand inside overlay also uses the gold-gradient highlight.
 
-### 3. Admin edits not reflected on the website
-The public pages render hard-coded arrays from `src/data/site-data.ts`, so changes saved to the database never appear.
+### Layout / Responsiveness
 
-Convert these pages to fetch from Supabase (with the static arrays kept only as fallback while loading / if DB empty):
+```
+[ ◐ SURYANSHI ]   Home  About  Services  Portfolio  ...    [ Book Now ]
+```
+- Desktop (≥lg): brand left, nav center (flex-1 + justify-center), CTA right.
+- Tablet/mobile (<lg): brand left, [Book] + [☰] right; nav hidden until overlay opens.
 
-- `src/routes/services.tsx` → fetch active rows from `services` ordered by `sort_order`.
-- `src/routes/packages.tsx` → fetch active rows from `packages`.
-- `src/routes/portfolio.tsx` → fetch published `portfolio_items`; build category filter list from DB rows.
-- `src/routes/reviews.tsx` → fetch published `testimonials`.
-- `src/routes/index.tsx` services preview → fetch top 6 active services.
+### Technical Changes
 
-Each page keeps a small loading skeleton; if the query returns empty (e.g. fresh DB), fall back to the existing static arrays so the site never looks empty.
+- Edit `src/components/site-header.tsx`:
+  - Wrap header in a `fixed top-3 inset-x-3 md:inset-x-6 z-50` container; inner `rounded-full` pill with `px-4 md:px-6 py-2.5`.
+  - Replace current scrolled/transparent two-line brand with a single-line wordmark span using `bg-gradient-to-r from-gold via-gold-dark to-gold bg-clip-text text-transparent` plus `drop-shadow` for readability over hero video. Eyebrow "Makeover" appears under the wordmark on `md:` and up only.
+  - Center nav: change desktop nav to `absolute left-1/2 -translate-x-1/2` or use 3-column flex (`justify-between` with center group `flex-1 justify-center`).
+  - Add a dedicated red CTA style (e.g. inline classes: `bg-[oklch(0.62_0.20_25)] hover:bg-[oklch(0.55_0.22_25)] text-white rounded-full px-5 py-2.5 text-[11px] uppercase tracking-[0.2em]`). Keep existing `btn-gold` available for other pages.
+  - Mobile: show shrunk "Book" pill + hamburger; both inside the same pill bar.
+  - Mobile overlay menu: brand at top uses the same gold gradient highlight.
+- No changes to other files. No new dependencies. Brand colors come from existing CSS vars in `src/styles.css` (`--gold`, `--gold-dark`, `--ink`, `--surface`).
+- `useState`/`useEffect` scroll listener is preserved; it now toggles between transparent-glass and solid-surface variants of the pill.
 
-### 4. Portfolio dashboard: "Image required" after choosing a file
-The storage bucket `portfolio` has RLS policies that call `public.has_role(...)`. In a previous migration we revoked EXECUTE on `public.has_role` from the public/authenticated roles (only `private.has_role` is callable). As a result the storage INSERT policy evaluates to false, the upload silently fails, the file URL is never set, and Save then complains "Image required".
+### Out of Scope
 
-Fix with a new migration that updates the three storage policies (`Admins upload/update/delete portfolio files`) to call `private.has_role(auth.uid(), 'admin')` instead of `public.has_role(...)`.
+- No content/data changes.
+- No router/route changes.
+- Footer untouched.
 
-Also harden the admin upload UX in `PortfolioAdmin`:
-- Show toast errors from upload (already does) but also keep the file input enabled so the user can retry.
-- Disable the Save button while `uploading` is true so the user can't submit before the upload finishes.
-
-### Technical summary
-
-Files to edit
-- `src/routes/booking.tsx` — phone validation (exactly 10 digits) + input constraints.
-- `src/routes/admin.tsx` — Bookings table: show service name from `service_slug`; PortfolioAdmin: disable Save while uploading.
-- `src/routes/services.tsx`, `src/routes/packages.tsx`, `src/routes/portfolio.tsx`, `src/routes/reviews.tsx`, `src/routes/index.tsx` — fetch from Supabase with static fallback.
-
-New migration
-- Update storage RLS policies on `storage.objects` for the `portfolio` bucket to use `private.has_role` instead of `public.has_role`.
-
-No schema changes to existing tables. No new tables.
-
-After approval I will implement these in default mode.
+After approval I'll switch to default mode and implement the edits in `src/components/site-header.tsx`.
