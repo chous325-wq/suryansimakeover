@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import heroImg from "@/assets/hero-suryanshi.jpg";
 import heroVideoAsset from "@/assets/hero-video.mp4.asset.json";
 import g1 from "@/assets/gallery-1.jpg";
@@ -224,15 +224,6 @@ function HomePage() {
         </div>
       </section>
     </>
-  );
-}
-
-function Stat({ n, l }: { n: string; l: string }) {
-  return (
-    <div className="text-center">
-      <p className="font-display text-3xl text-gold leading-none">{n}</p>
-      <p className="text-[9px] font-sans-ui uppercase tracking-[0.25em] text-surface/70 mt-2">{l}</p>
-    </div>
   );
 }
 
