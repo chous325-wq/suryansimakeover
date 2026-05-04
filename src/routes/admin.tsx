@@ -103,6 +103,8 @@ function AdminPage() {
             <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
             <TabsTrigger value="testimonials">Reviews</TabsTrigger>
             <TabsTrigger value="offers">Offers</TabsTrigger>
+            <TabsTrigger value="hero">Hero Video</TabsTrigger>
+            <TabsTrigger value="reels">Reels</TabsTrigger>
           </TabsList>
           <TabsContent value="bookings"><BookingsAdmin /></TabsContent>
           <TabsContent value="services"><ServicesAdmin /></TabsContent>
@@ -110,6 +112,8 @@ function AdminPage() {
           <TabsContent value="portfolio"><PortfolioAdmin /></TabsContent>
           <TabsContent value="testimonials"><TestimonialsAdmin /></TabsContent>
           <TabsContent value="offers"><OffersAdmin /></TabsContent>
+          <TabsContent value="hero"><HeroVideoAdmin /></TabsContent>
+          <TabsContent value="reels"><ReelsAdmin /></TabsContent>
         </Tabs>
       </div>
     </section>
