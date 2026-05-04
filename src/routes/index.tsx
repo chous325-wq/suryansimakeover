@@ -14,7 +14,7 @@ import hd from "@/assets/service-hd.jpg";
 import airbrush from "@/assets/service-prewed.jpg";
 import hair from "@/assets/service-hair.jpg";
 import { BRAND, whatsappLink } from "@/lib/brand";
-import { Sparkles, Award, ShieldCheck, Clock, ArrowRight, Star, Instagram, MapPin, Phone, MessageCircle, ChevronLeft, ChevronRight, Volume2, VolumeX } from "lucide-react";
+import { Sparkles, Award, ShieldCheck, Clock, ArrowRight, Star, Instagram, MapPin, Phone, MessageCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
@@ -55,9 +55,18 @@ const WHY = [
 
 function HomePage() {
   const [scrollY, setScrollY] = useState(0);
-  const [muted, setMuted] = useState(true);
-  const audioRef = useRef<HTMLAudioElement>(null);
   const [servicesPreview, setServicesPreview] = useState(SERVICES_PREVIEW_DEFAULT);
+  const [heroVideoUrl, setHeroVideoUrl] = useState<string>(heroVideoAsset.url);
+  useEffect(() => {
+    supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "hero_video_url")
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data?.value) setHeroVideoUrl(data.value);
+      });
+  }, []);
   useEffect(() => {
     supabase
       .from("services")
@@ -84,18 +93,6 @@ function HomePage() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const toggleSound = async () => {
-    const a = audioRef.current;
-    if (!a) return;
-    if (muted) {
-      a.volume = 0.35;
-      try { await a.play(); setMuted(false); } catch {}
-    } else {
-      a.pause();
-      setMuted(true);
-    }
-  };
-
   return (
     <>
       {/* HERO — Full-screen with parallax */}
@@ -105,7 +102,7 @@ function HomePage() {
           style={{ transform: `translateY(${scrollY * 0.3}px) scale(1.1)` }}
         >
           <video
-            src={heroVideoAsset.url}
+            src={heroVideoUrl}
             poster={heroImg}
             autoPlay
             muted
@@ -114,60 +111,6 @@ function HomePage() {
             preload="auto"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-ink/80 via-ink/40 to-ink/30" />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent" />
-        </div>
-
-        <audio ref={audioRef} src="/audio/hero-ambient.mp3" loop preload="none" />
-
-        <button
-          onClick={toggleSound}
-          aria-label={muted ? "Unmute" : "Mute"}
-          className="absolute top-24 right-5 lg:right-12 z-20 w-11 h-11 rounded-full bg-surface/15 backdrop-blur-md border border-surface/30 text-surface flex items-center justify-center hover:bg-gold hover:text-ink hover:border-gold transition-all"
-        >
-          {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-        </button>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 py-32 w-full">
-          <div className="max-w-2xl animate-fade-up">
-            <span className="inline-flex items-center gap-3 text-gold font-sans-ui uppercase tracking-[0.3em] text-[10px] mb-6">
-              <span className="h-px w-10 bg-gold" /> {BRAND.address}
-            </span>
-            <h1 className="font-display text-5xl md:text-7xl lg:text-8xl text-surface leading-[1.02] tracking-tight text-balance mb-6">
-              Flawless Makeup
-              <span className="block italic text-gold">for your special</span>
-              <span className="block">moments.</span>
-            </h1>
-            <p className="font-sans-ui uppercase tracking-[0.25em] text-[11px] text-surface/80 mb-10">
-              Bridal · HD · Airbrush · Party Makeup
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Link to="/booking" className="btn-gold !bg-gold !text-ink hover:!bg-surface hover:!text-ink">
-                Book Now <ArrowRight className="w-3.5 h-3.5 ml-3" />
-              </Link>
-              <a
-                href={whatsappLink(`Hi ${BRAND.name}, I'd like to enquire.`)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-outline-gold !text-surface !border-surface/60 hover:!bg-surface hover:!text-ink"
-              >
-                <MessageCircle className="w-3.5 h-3.5 mr-3" /> WhatsApp Now
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* Glass stat card */}
-        <div className="hidden md:flex absolute bottom-12 right-12 z-10 gap-8 px-8 py-6 bg-surface/10 backdrop-blur-xl border border-surface/20 text-surface">
-          <Stat n="500+" l="Brides" />
-          <div className="w-px bg-surface/20" />
-          <Stat n="12+" l="Years" />
-          <div className="w-px bg-surface/20" />
-          <Stat n="5★" l="Rated" />
-        </div>
-
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-surface/60 text-[10px] font-sans-ui uppercase tracking-[0.4em] animate-pulse">
-          Scroll
         </div>
       </section>
 
@@ -249,22 +192,7 @@ function HomePage() {
               <Instagram className="w-7 h-7" /> {BRAND.instagramHandle}
             </a>
           </div>
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
-            {[g1, g2, g3, g4, g5, g6].map((src, i) => (
-              <a
-                key={i}
-                href={BRAND.instagramUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="relative aspect-square overflow-hidden bg-blush group"
-              >
-                <img src={src} alt={`Instagram ${i + 1}`} loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                <div className="absolute inset-0 bg-ink/0 group-hover:bg-ink/40 transition-colors flex items-center justify-center">
-                  <Instagram className="w-6 h-6 text-surface opacity-0 group-hover:opacity-100 transition-opacity" />
-                </div>
-              </a>
-            ))}
-          </div>
+          <ReelsRow />
         </div>
       </section>
 
