@@ -978,9 +978,7 @@ function ReelsAdmin() {
   );
 }
 
-function _LoadingBlockMarker() {
-  return <div className="flex justify-center py-12"><Loader2 className="w-6 h-6 animate-spin text-gold" /></div>;
-}
+
 function EmptyBlock({ label }: { label: string }) {
   return <Card className="p-12 text-center text-muted-foreground">{label}</Card>;
 }
