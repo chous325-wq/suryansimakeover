@@ -98,6 +98,7 @@ function AdminPage() {
         <Tabs defaultValue="bookings" className="space-y-6">
           <TabsList className="flex-wrap h-auto">
             <TabsTrigger value="bookings">Bookings</TabsTrigger>
+            <TabsTrigger value="site">Site Info</TabsTrigger>
             <TabsTrigger value="services">Services</TabsTrigger>
             <TabsTrigger value="packages">Packages</TabsTrigger>
             <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
@@ -107,6 +108,7 @@ function AdminPage() {
             <TabsTrigger value="reels">Reels</TabsTrigger>
           </TabsList>
           <TabsContent value="bookings"><BookingsAdmin /></TabsContent>
+          <TabsContent value="site"><SiteInfoAdmin /></TabsContent>
           <TabsContent value="services"><ServicesAdmin /></TabsContent>
           <TabsContent value="packages"><PackagesAdmin /></TabsContent>
           <TabsContent value="portfolio"><PortfolioAdmin /></TabsContent>
@@ -822,6 +824,78 @@ function OffersAdmin() {
 /* ===================== SHARED ===================== */
 function LoadingBlock() {
   return <div className="flex justify-center py-12"><Loader2 className="w-6 h-6 animate-spin text-gold" /></div>;
+}
+
+/* ===================== SITE INFO ===================== */
+const SITE_FIELDS: { key: string; label: string; placeholder?: string; help?: string }[] = [
+  { key: "brand_name", label: "Brand Name", placeholder: "Suryanshi Makeover" },
+  { key: "tagline", label: "Tagline" },
+  { key: "phone_display", label: "Phone (display)", placeholder: "+91 81446 02025" },
+  { key: "phone_tel", label: "Phone (dial number)", placeholder: "+918144602025", help: "Used in tel: links — digits only with country code" },
+  { key: "whatsapp_number", label: "WhatsApp Number", placeholder: "918144602025", help: "Country code + number, no + or spaces" },
+  { key: "instagram_url", label: "Instagram URL" },
+  { key: "instagram_handle", label: "Instagram Handle", placeholder: "@suryanshi_makeover_offcial" },
+  { key: "facebook_url", label: "Facebook URL" },
+  { key: "address", label: "Address" },
+  { key: "map_url", label: "Map Link (Google Maps share URL)" },
+  { key: "map_embed", label: "Map Embed URL", help: "From Google Maps → Share → Embed map → src URL" },
+];
+
+function SiteInfoAdmin() {
+  const [values, setValues] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    supabase
+      .from("site_settings")
+      .select("key, value")
+      .in("key", SITE_FIELDS.map((f) => f.key))
+      .then(({ data }) => {
+        const v: Record<string, string> = {};
+        SITE_FIELDS.forEach((f) => { v[f.key] = ""; });
+        (data ?? []).forEach((r) => { v[r.key] = r.value ?? ""; });
+        setValues(v);
+        setLoading(false);
+      });
+  }, []);
+
+  const save = async () => {
+    setSaving(true);
+    const rows = SITE_FIELDS.map((f) => ({ key: f.key, value: values[f.key] ?? "" }));
+    const { error } = await supabase.from("site_settings").upsert(rows, { onConflict: "key" });
+    setSaving(false);
+    if (error) toast.error(error.message);
+    else toast.success("Site info saved");
+  };
+
+  if (loading) return <LoadingBlock />;
+
+  return (
+    <Card className="p-6 space-y-4 max-w-3xl">
+      <div>
+        <h3 className="font-display text-xl mb-1">Site Info & Contact</h3>
+        <p className="text-xs text-muted-foreground">
+          Leave a field blank to hide it across the website (link, button, or section).
+        </p>
+      </div>
+      <div className="grid sm:grid-cols-2 gap-4">
+        {SITE_FIELDS.map((f) => (
+          <Field key={f.key} label={f.label}>
+            <Input
+              value={values[f.key] ?? ""}
+              placeholder={f.placeholder}
+              onChange={(e) => setValues({ ...values, [f.key]: e.target.value })}
+            />
+            {f.help && <p className="text-[10px] text-muted-foreground mt-1">{f.help}</p>}
+          </Field>
+        ))}
+      </div>
+      <Button onClick={save} disabled={saving} className="w-full">
+        {saving ? "Saving…" : "Save Site Info"}
+      </Button>
+    </Card>
+  );
 }
 
 /* ===================== HERO VIDEO ===================== */

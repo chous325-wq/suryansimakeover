@@ -4,6 +4,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { FloatingActions } from "@/components/floating-actions";
 import { NotFound } from "@/components/not-found";
 import { Toaster } from "@/components/ui/sonner";
+import { SiteSettingsProvider } from "@/hooks/use-site-settings";
 
 import appCss from "../styles.css?url";
 
@@ -59,14 +60,16 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <SiteHeader />
-      <main className="flex-1">
-        <Outlet />
-      </main>
-      <SiteFooter />
-      <FloatingActions />
-      <Toaster />
-    </div>
+    <SiteSettingsProvider>
+      <div className="min-h-screen flex flex-col bg-background text-foreground">
+        <SiteHeader />
+        <main className="flex-1">
+          <Outlet />
+        </main>
+        <SiteFooter />
+        <FloatingActions />
+        <Toaster />
+      </div>
+    </SiteSettingsProvider>
   );
 }

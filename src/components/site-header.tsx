@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
-import { BRAND } from "@/lib/brand";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 
 const links = [
   { to: "/", label: "Home" },
@@ -16,6 +16,7 @@ const links = [
 export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const s = useSiteSettings();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -37,7 +38,7 @@ export function SiteHeader() {
           <span
             className="font-display text-lg md:text-2xl tracking-[0.18em] uppercase font-semibold bg-gradient-to-r from-gold via-[oklch(0.82_0.12_82)] to-gold-dark bg-clip-text text-transparent drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]"
           >
-            {BRAND.short}
+            {s.brand_short}
           </span>
           <span
             className={`hidden md:block font-sans-ui uppercase tracking-[0.32em] text-[8px] mt-1 transition-colors ${
@@ -93,7 +94,7 @@ export function SiteHeader() {
         <div className="fixed inset-0 z-50 bg-surface flex flex-col animate-fade-in lg:hidden">
           <div className="flex justify-between items-center px-5 py-5 border-b border-gold/20">
             <span className="font-display text-xl tracking-[0.2em] uppercase font-semibold bg-gradient-to-r from-gold via-[oklch(0.82_0.12_82)] to-gold-dark bg-clip-text text-transparent">
-              {BRAND.short}
+              {s.brand_short}
             </span>
             <button aria-label="Close" onClick={() => setOpen(false)}>
               <X className="w-6 h-6" />
