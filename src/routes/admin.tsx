@@ -496,10 +496,28 @@ function PortfolioAdmin() {
   useEffect(() => { load(); }, [load]);
 
   const upload = async (file: File): Promise<string | null> => {
+    const allowed = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+    if (!allowed.includes(file.type)) {
+      toast.error("Only JPG, PNG, WEBP or GIF images are allowed");
+      return null;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("Image must be 10MB or smaller");
+      return null;
+    }
+    const extMap: Record<string, string> = {
+      "image/jpeg": "jpg",
+      "image/png": "png",
+      "image/webp": "webp",
+      "image/gif": "gif",
+    };
     setUploading(true);
-    const ext = file.name.split(".").pop();
+    const ext = extMap[file.type];
     const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-    const { error } = await supabase.storage.from("portfolio").upload(path, file);
+    const { error } = await supabase.storage.from("portfolio").upload(path, file, {
+      contentType: file.type,
+      upsert: false,
+    });
     setUploading(false);
     if (error) { toast.error(error.message); return null; }
     const { data } = supabase.storage.from("portfolio").getPublicUrl(path);
