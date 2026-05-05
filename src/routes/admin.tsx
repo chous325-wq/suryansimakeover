@@ -844,8 +844,22 @@ function HeroVideoAdmin() {
   }, []);
 
   const upload = async (file: File) => {
+    const allowed = ["video/mp4", "video/webm", "video/quicktime"];
+    if (!allowed.includes(file.type)) {
+      toast.error("Only MP4, WEBM or MOV videos are allowed");
+      return;
+    }
+    if (file.size > 100 * 1024 * 1024) {
+      toast.error("Video must be 100MB or smaller");
+      return;
+    }
+    const extMap: Record<string, string> = {
+      "video/mp4": "mp4",
+      "video/webm": "webm",
+      "video/quicktime": "mov",
+    };
     setUploading(true);
-    const ext = file.name.split(".").pop();
+    const ext = extMap[file.type];
     const path = `hero-${Date.now()}.${ext}`;
     const { error } = await supabase.storage.from("hero-video").upload(path, file, {
       contentType: file.type,
