@@ -98,6 +98,7 @@ function AdminPage() {
         <Tabs defaultValue="bookings" className="space-y-6">
           <TabsList className="flex-wrap h-auto">
             <TabsTrigger value="bookings">Bookings</TabsTrigger>
+            <TabsTrigger value="site">Site Info</TabsTrigger>
             <TabsTrigger value="services">Services</TabsTrigger>
             <TabsTrigger value="packages">Packages</TabsTrigger>
             <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
@@ -107,6 +108,7 @@ function AdminPage() {
             <TabsTrigger value="reels">Reels</TabsTrigger>
           </TabsList>
           <TabsContent value="bookings"><BookingsAdmin /></TabsContent>
+          <TabsContent value="site"><SiteInfoAdmin /></TabsContent>
           <TabsContent value="services"><ServicesAdmin /></TabsContent>
           <TabsContent value="packages"><PackagesAdmin /></TabsContent>
           <TabsContent value="portfolio"><PortfolioAdmin /></TabsContent>
