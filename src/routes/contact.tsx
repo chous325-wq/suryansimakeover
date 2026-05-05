@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { PageHero } from "@/components/page-hero";
 import { toast } from "sonner";
-import { Phone, Mail, MapPin, Instagram } from "lucide-react";
-import { BRAND } from "@/lib/brand";
+import { Phone, MapPin, Instagram, Facebook } from "lucide-react";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -16,6 +16,7 @@ export const Route = createFileRoute("/contact")({
 });
 
 function ContactPage() {
+  const s = useSiteSettings();
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const handle = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,20 +32,22 @@ function ContactPage() {
           <div>
             <h2 className="font-display text-3xl mb-8">Studio Details</h2>
             <ul className="space-y-6">
-              <ContactRow Icon={MapPin} label="Visit the Studio" value={BRAND.address} href={BRAND.mapUrl} />
-              <ContactRow Icon={Phone} label="Call us" value={BRAND.phoneDisplay} href={`tel:${BRAND.phoneTel}`} />
-              <ContactRow Icon={Mail} label="Email" value={BRAND.email} href={`mailto:${BRAND.email}`} />
-              <ContactRow Icon={Instagram} label="Instagram" value={BRAND.instagramHandle} href={BRAND.instagramUrl} />
+              {s.address && <ContactRow Icon={MapPin} label="Visit the Studio" value={s.address} href={s.map_url} />}
+              {s.phone_tel && <ContactRow Icon={Phone} label="Call us" value={s.phone_display || s.phone_tel} href={`tel:${s.phone_tel}`} />}
+              {s.instagram_url && <ContactRow Icon={Instagram} label="Instagram" value={s.instagram_handle} href={s.instagram_url} />}
+              {s.facebook_url && <ContactRow Icon={Facebook} label="Facebook" value={s.facebook_url} href={s.facebook_url} />}
             </ul>
-            <div className="mt-10 aspect-video bg-blush overflow-hidden">
-              <iframe
-                title="Studio location"
-                src={BRAND.mapEmbed}
-                className="w-full h-full border-0"
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-            </div>
+            {s.map_embed && (
+              <div className="mt-10 aspect-video bg-blush overflow-hidden">
+                <iframe
+                  title="Studio location"
+                  src={s.map_embed}
+                  className="w-full h-full border-0"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+            )}
           </div>
           <form onSubmit={handle} className="bg-surface border-2 border-gold/30 p-8 md:p-10 space-y-6 self-start">
             <h2 className="font-display text-3xl mb-2">Send a message</h2>
