@@ -1,10 +1,14 @@
 import { MessageCircle, Phone } from "lucide-react";
-import { BRAND, whatsappLink } from "@/lib/brand";
+import { useSiteSettings, whatsappLinkFor } from "@/hooks/use-site-settings";
 
 export function FloatingActions() {
-  const wa = whatsappLink(`Hi ${BRAND.name}, I'd like to book a consultation.`);
+  const s = useSiteSettings();
+  const wa = s.whatsapp_number
+    ? whatsappLinkFor(s.whatsapp_number, `Hi ${s.brand_name}, I'd like to book a consultation.`)
+    : "";
   return (
     <>
+      {wa && (
       <a
         href={wa}
         target="_blank"
@@ -16,13 +20,16 @@ export function FloatingActions() {
         <MessageCircle className="w-5 h-5" />
         <span className="font-sans-ui uppercase tracking-[0.15em] text-[11px] hidden sm:inline">WhatsApp</span>
       </a>
+      )}
+      {s.phone_tel && (
       <a
-        href={`tel:${BRAND.phoneTel}`}
+        href={`tel:${s.phone_tel}`}
         aria-label="Call us"
         className="fixed bottom-6 left-6 z-40 bg-ink text-surface w-12 h-12 rounded-full flex items-center justify-center shadow-elegant hover:scale-105 transition-transform"
       >
         <Phone className="w-5 h-5" />
       </a>
+      )}
     </>
   );
 }
