@@ -13,7 +13,7 @@ import party from "@/assets/service-party.jpg";
 import hd from "@/assets/service-hd.jpg";
 import airbrush from "@/assets/service-prewed.jpg";
 import hair from "@/assets/service-hair.jpg";
-import { BRAND, whatsappLink } from "@/lib/brand";
+import { useSiteSettings, whatsappLinkFor } from "@/hooks/use-site-settings";
 import { Sparkles, Award, ShieldCheck, Clock, ArrowRight, Star, Instagram, MapPin, Phone, MessageCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -57,6 +57,7 @@ function HomePage() {
   const [scrollY, setScrollY] = useState(0);
   const [servicesPreview, setServicesPreview] = useState(SERVICES_PREVIEW_DEFAULT);
   const [heroVideoUrl, setHeroVideoUrl] = useState<string>(heroVideoAsset.url);
+  const s = useSiteSettings();
   useEffect(() => {
     supabase
       .from("site_settings")
@@ -184,17 +185,17 @@ function HomePage() {
       </section>
 
       {/* INSTAGRAM static feed */}
-      <section className="py-24 px-6 lg:px-12">
+      {s.instagram_url && (<section className="py-24 px-6 lg:px-12">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <span className="ornament justify-center mb-5">Follow on Instagram</span>
-            <a href={BRAND.instagramUrl} target="_blank" rel="noopener noreferrer" className="font-display text-3xl md:text-4xl text-ink hover:text-gold transition-colors inline-flex items-center gap-3">
-              <Instagram className="w-7 h-7" /> {BRAND.instagramHandle}
+            <a href={s.instagram_url} target="_blank" rel="noopener noreferrer" className="font-display text-3xl md:text-4xl text-ink hover:text-gold transition-colors inline-flex items-center gap-3">
+              <Instagram className="w-7 h-7" /> {s.instagram_handle}
             </a>
           </div>
           <ReelsRow />
         </div>
-      </section>
+      </section>)}
 
       {/* TESTIMONIALS slider */}
       <TestimonialsSlider />
@@ -205,22 +206,22 @@ function HomePage() {
           <div>
             <SectionHead align="left" eyebrow="Visit Us" title={<>Let's create <span className="italic">magic</span></>} />
             <div className="space-y-5 mb-10">
-              <Row Icon={MapPin} label="Studio" value={BRAND.address} href={BRAND.mapUrl} />
-              <Row Icon={Phone} label="Call" value={BRAND.phoneDisplay} href={`tel:${BRAND.phoneTel}`} />
-              <Row Icon={MessageCircle} label="WhatsApp" value={BRAND.phoneDisplay} href={whatsappLink(`Hi ${BRAND.name}!`)} />
-              <Row Icon={Instagram} label="Instagram" value={BRAND.instagramHandle} href={BRAND.instagramUrl} />
+              {s.address && <Row Icon={MapPin} label="Studio" value={s.address} href={s.map_url || "#"} />}
+              {s.phone_tel && <Row Icon={Phone} label="Call" value={s.phone_display || s.phone_tel} href={`tel:${s.phone_tel}`} />}
+              {s.whatsapp_number && <Row Icon={MessageCircle} label="WhatsApp" value={s.phone_display || s.whatsapp_number} href={whatsappLinkFor(s.whatsapp_number, `Hi ${s.brand_name}!`)} />}
+              {s.instagram_url && <Row Icon={Instagram} label="Instagram" value={s.instagram_handle} href={s.instagram_url} />}
             </div>
             <Link to="/booking" className="btn-gold">Book a Consultation</Link>
           </div>
-          <div className="aspect-square md:aspect-[4/3] bg-surface border border-gold/30 p-2 shadow-elegant">
+          {s.map_embed && (<div className="aspect-square md:aspect-[4/3] bg-surface border border-gold/30 p-2 shadow-elegant">
             <iframe
               title="Studio location"
-              src={BRAND.mapEmbed}
+              src={s.map_embed}
               className="w-full h-full border-0"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
             />
-          </div>
+          </div>)}
         </div>
       </section>
     </>
