@@ -155,3 +155,31 @@
     from { opacity: 0; } to { opacity: 1; }
   }
 }
+
+@layer utilities {
+  /* Global gold text emphasis — deeper, bolder, readable on any background */
+  .text-gold,
+  .text-gold-dark,
+  .hover\:text-gold:hover {
+    color: #B8860B !important;
+    font-weight: 700;
+    font-size: max(1em, 18px);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Brand name shimmer animation in header */
+  @keyframes brand-shimmer {
+    0%, 100% {
+      background-position: 0% 50%;
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
+    }
+    50% {
+      background-position: 100% 50%;
+      filter: drop-shadow(0 2px 8px rgba(192, 154, 83, 0.6));
+    }
+  }
+  .animate-brand-shimmer {
+    background-size: 200% auto;
+    animation: brand-shimmer 3.5s ease-in-out infinite;
+  }
+}
