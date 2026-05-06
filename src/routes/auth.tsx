@@ -49,7 +49,7 @@ function AuthPage() {
       <Card className="w-full max-w-md p-8 space-y-6">
         <div className="text-center space-y-2">
           <h1 className="font-display text-3xl tracking-wide">Admin Login</h1>
-          <p className="text-sm text-muted-foreground">Suryanshi Makeover dashboard</p>
+          <p className="text-sm text-muted-foreground">Admin dashboard</p>
         </div>
         <form onSubmit={onSubmit} className="space-y-4">
           <Input
