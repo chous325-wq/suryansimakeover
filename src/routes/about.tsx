@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PageHero } from "@/components/page-hero";
 import about from "@/assets/about-artist.jpg";
 import { Award, Heart, Sparkles } from "lucide-react";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -14,19 +15,20 @@ export const Route = createFileRoute("/about")({
 });
 
 function AboutPage() {
+  const s = useSiteSettings();
   return (
     <>
       <PageHero eyebrow="The Artist" title={<>A decade of <span className="italic">heritage artistry</span></>} subtitle="From the temples of Puri to brides across India — a journey rooted in tradition, refined by modern luxury." />
       <section className="py-24 px-6 lg:px-12">
         <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
           <div className="relative w-full max-w-md mx-auto aspect-[3/4] bg-blush p-3">
-            <img src={about} alt="Makeup artist Suryanshi at work" loading="lazy" width={900} height={1200} className="w-full h-full object-cover" />
+            <img src={about} alt={`Makeup artist ${s.brand_short} at work`} loading="lazy" width={900} height={1200} className="w-full h-full object-cover" />
           </div>
           <div>
             <span className="ornament mb-6">Founder · Lead Artist</span>
-            <h2 className="font-display text-4xl md:text-5xl mb-6">Suryanshi Patnaik</h2>
+            <h2 className="font-display text-4xl md:text-5xl mb-6">{s.brand_name}</h2>
             <div className="space-y-5 text-ink/80 leading-relaxed">
-              <p>Born in Bhubaneswar and trained in Mumbai under some of India's most respected celebrity artists, Suryanshi blends classical Odia bridal aesthetics with international techniques.</p>
+              <p>Born in Bhubaneswar and trained in Mumbai under some of India's most respected celebrity artists, {s.brand_short} blends classical Odia bridal aesthetics with international techniques.</p>
               <p>Her studio has had the privilege of styling over 500 brides, fashion editorials, and pre-wedding campaigns across Odisha. Each look is approached as a personal heirloom — never repeated, always remembered.</p>
               <p>"Beauty is not transformation. It's translation — of who you are, on the most important day of your life."</p>
             </div>
