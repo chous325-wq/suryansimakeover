@@ -836,6 +836,7 @@ const SITE_FIELDS: { key: string; label: string; placeholder?: string; help?: st
   { key: "instagram_url", label: "Instagram URL" },
   { key: "instagram_handle", label: "Instagram Handle", placeholder: "@suryanshi_makeover_offcial" },
   { key: "facebook_url", label: "Facebook URL" },
+  { key: "email", label: "Email", placeholder: "hello@example.com" },
   { key: "address", label: "Address" },
   { key: "map_url", label: "Map Link (Google Maps share URL)" },
   { key: "map_embed", label: "Map Embed URL", help: "From Google Maps → Share → Embed map → src URL" },

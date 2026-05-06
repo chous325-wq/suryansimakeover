@@ -166,7 +166,7 @@ function HomePage() {
         style={{ background: "linear-gradient(135deg, var(--blush), var(--surface) 50%, var(--nude))" }}
       >
         <div className="max-w-6xl mx-auto">
-          <SectionHead eyebrow="Why Choose Us" title={<>The Suryanshi <span className="italic">promise</span></>} />
+          <SectionHead eyebrow="Why Choose Us" title={<>The {s.brand_short} <span className="italic">promise</span></>} />
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
             {WHY.map(({ Icon, title }, i) => (
               <div

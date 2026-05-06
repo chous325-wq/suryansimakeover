@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { PageHero } from "@/components/page-hero";
 import { toast } from "sonner";
-import { Phone, MapPin, Instagram, Facebook } from "lucide-react";
+import { Phone, MapPin, Instagram, Facebook, Mail } from "lucide-react";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 
 export const Route = createFileRoute("/contact")({
@@ -34,6 +34,7 @@ function ContactPage() {
             <ul className="space-y-6">
               {s.address && <ContactRow Icon={MapPin} label="Visit the Studio" value={s.address} href={s.map_url} />}
               {s.phone_tel && <ContactRow Icon={Phone} label="Call us" value={s.phone_display || s.phone_tel} href={`tel:${s.phone_tel}`} />}
+              {s.email && <ContactRow Icon={Mail} label="Email" value={s.email} href={`mailto:${s.email}`} />}
               {s.instagram_url && <ContactRow Icon={Instagram} label="Instagram" value={s.instagram_handle} href={s.instagram_url} />}
               {s.facebook_url && <ContactRow Icon={Facebook} label="Facebook" value={s.facebook_url} href={s.facebook_url} />}
             </ul>

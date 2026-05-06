@@ -16,6 +16,7 @@ export type SiteSettings = {
   map_embed: string;
   address: string;
   hero_video_url: string;
+  email: string;
 };
 
 export const SETTING_KEYS = [
@@ -31,6 +32,7 @@ export const SETTING_KEYS = [
   "map_embed",
   "address",
   "hero_video_url",
+  "email",
 ] as const;
 
 const DEFAULTS: SiteSettings = {
@@ -47,6 +49,7 @@ const DEFAULTS: SiteSettings = {
   map_embed: BRAND.mapEmbed,
   address: BRAND.address,
   hero_video_url: "",
+  email: BRAND.email,
 };
 
 const Ctx = createContext<SiteSettings>(DEFAULTS);
