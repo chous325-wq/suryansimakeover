@@ -300,6 +300,7 @@ export type Database = {
         Row: {
           author_name: string
           author_role: string | null
+          avatar_url: string | null
           created_at: string
           id: string
           is_published: boolean
@@ -311,6 +312,7 @@ export type Database = {
         Insert: {
           author_name: string
           author_role?: string | null
+          avatar_url?: string | null
           created_at?: string
           id?: string
           is_published?: boolean
@@ -322,6 +324,7 @@ export type Database = {
         Update: {
           author_name?: string
           author_role?: string | null
+          avatar_url?: string | null
           created_at?: string
           id?: string
           is_published?: boolean

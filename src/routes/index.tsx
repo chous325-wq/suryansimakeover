@@ -366,7 +366,7 @@ function PortfolioGrid() {
   );
 }
 
-type Testimonial = { author_name: string; author_role: string | null; quote: string; rating: number };
+type Testimonial = { author_name: string; author_role: string | null; quote: string; rating: number; avatar_url?: string | null };
 
 function TestimonialsSlider() {
   const [items, setItems] = useState<Testimonial[]>([
@@ -379,7 +379,7 @@ function TestimonialsSlider() {
   useEffect(() => {
     supabase
       .from("testimonials")
-      .select("author_name, author_role, quote, rating")
+      .select("author_name, author_role, quote, rating, avatar_url")
       .eq("is_published", true)
       .order("sort_order", { ascending: true })
       .then(({ data }) => {
@@ -402,14 +402,24 @@ function TestimonialsSlider() {
       <div className="max-w-3xl mx-auto text-center relative z-10">
         <span className="ornament justify-center mb-6" style={{ color: "var(--gold)" }}>Testimonials</span>
         <h2 className="font-display text-4xl md:text-5xl mb-12 text-balance">In their own words</h2>
-        <div className="min-h-[220px] flex flex-col items-center justify-center" key={idx}>
-          <div className="flex gap-1 text-gold mb-6 animate-fade-in">
-            {Array.from({ length: t.rating }).map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
+        <div className="relative flex justify-center" key={idx}>
+          <div className="bg-surface text-ink rounded-3xl shadow-elegant px-8 md:px-12 pt-20 pb-10 max-w-xl w-full animate-fade-in relative">
+            <div className="absolute -top-12 left-1/2 -translate-x-1/2">
+              <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-surface shadow-lg bg-gradient-to-br from-blush to-nude flex items-center justify-center">
+                {t.avatar_url ? (
+                  <img src={t.avatar_url} alt={t.author_name} className="w-full h-full object-cover" />
+                ) : (
+                  <span className="font-display text-3xl text-gold-dark">{t.author_name[0]}</span>
+                )}
+              </div>
+            </div>
+            <p className="font-display text-xl text-ink mb-1">{t.author_name}</p>
+            {t.author_role && <p className="text-xs font-sans-ui text-ink/60 mb-5">{t.author_role}</p>}
+            <p className="font-display italic text-base md:text-lg text-ink/80 leading-relaxed mb-8">"{t.quote}"</p>
+            <div className="inline-flex items-center gap-1 px-5 py-2 rounded-full bg-gold/90 text-ink">
+              {Array.from({ length: t.rating }).map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
+            </div>
           </div>
-          <p className="font-display italic text-2xl md:text-3xl text-surface/95 leading-relaxed mb-8 animate-fade-in">"{t.quote}"</p>
-          <div className="h-px w-12 bg-gold/40 mx-auto mb-4" />
-          <p className="font-display text-lg">{t.author_name}</p>
-          {t.author_role && <p className="text-[10px] font-sans-ui uppercase tracking-[0.3em] text-gold mt-1">{t.author_role}</p>}
         </div>
         <div className="flex justify-center items-center gap-4 mt-10">
           <button onClick={() => setIdx((i) => (i - 1 + items.length) % items.length)} aria-label="Previous" className="w-10 h-10 border border-gold/40 flex items-center justify-center hover:bg-gold/10 transition-colors">
