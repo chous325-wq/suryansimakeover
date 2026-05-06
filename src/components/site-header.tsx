@@ -36,7 +36,8 @@ export function SiteHeader() {
       >
         <Link to="/" className="group shrink-0 flex flex-col leading-none">
           <span
-            className="animate-brand-shimmer font-display text-lg md:text-2xl tracking-[0.18em] uppercase font-bold bg-gradient-to-r from-gold via-[oklch(0.82_0.12_82)] to-gold-dark bg-clip-text text-transparent drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]"
+            className="animate-brand-shimmer font-display text-xl md:text-2xl tracking-[0.18em] uppercase font-bold"
+            style={{ color: "#B8860B", textShadow: "0 1px 2px rgba(0,0,0,0.35)" }}
           >
             {s.brand_short}
           </span>
@@ -93,7 +94,7 @@ export function SiteHeader() {
       {open && (
         <div className="fixed inset-0 z-50 bg-surface flex flex-col animate-fade-in lg:hidden">
           <div className="flex justify-between items-center px-5 py-5 border-b border-gold/20">
-            <span className="font-display text-xl tracking-[0.2em] uppercase font-semibold bg-gradient-to-r from-gold via-[oklch(0.82_0.12_82)] to-gold-dark bg-clip-text text-transparent">
+            <span className="font-display text-xl tracking-[0.2em] uppercase font-bold" style={{ color: "#B8860B", textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}>
               {s.brand_short}
             </span>
             <button aria-label="Close" onClick={() => setOpen(false)}>
