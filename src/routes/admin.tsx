@@ -626,6 +626,7 @@ function TestimonialsAdmin() {
     author_name: "",
     author_role: "" as string | null,
     quote: "", rating: 5,
+    avatar_url: "" as string | null,
     sort_order: 0, is_published: true,
   };
   const [items, setItems] = useState<T[]>([]);
@@ -699,6 +700,7 @@ function TestimonialsAdmin() {
         <EditDrawer title={editing.id ? "Edit Review" : "New Review"} onClose={() => setEditing(null)} onSave={save}>
           <Field label="Author Name"><Input value={editing.author_name} onChange={(e) => setEditing({ ...editing, author_name: e.target.value })} /></Field>
           <Field label="Author Role (e.g. Bride)"><Input value={editing.author_role ?? ""} onChange={(e) => setEditing({ ...editing, author_role: e.target.value })} /></Field>
+          <Field label="Avatar Image URL"><Input placeholder="https://..." value={editing.avatar_url ?? ""} onChange={(e) => setEditing({ ...editing, avatar_url: e.target.value })} /></Field>
           <Field label="Quote"><Textarea rows={4} value={editing.quote} onChange={(e) => setEditing({ ...editing, quote: e.target.value })} /></Field>
           <div className="grid grid-cols-3 gap-3">
             <Field label="Rating (1-5)"><Input type="number" min={1} max={5} value={editing.rating} onChange={(e) => setEditing({ ...editing, rating: Number(e.target.value) })} /></Field>
